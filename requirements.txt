@@ -5,3 +5,5 @@ ipywidgets==7.7.2
 openpyxl
 jupyter
 ipykernel
+voila
+papermill
