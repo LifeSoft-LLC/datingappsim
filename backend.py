@@ -22,7 +22,7 @@ women_df = pd.read_csv("synthetic_women_profiles.csv")
 men_df   = pd.read_csv("synthetic_men_profiles.csv")
 
 prob_women_likes_men = pd.read_csv("probability_matrix_women_likes_men.csv", index_col=0)
-prob_men_likes_women = pd.read_csv("probability_matrix_women_likes_women.csv", index_col=0)
+prob_men_likes_women = pd.read_csv("probability_matrix_men_likes_women.csv", index_col=0)
 # (Note: Ensure the CSV filename for the second probability matrix is correct.
 #  In the original code it was "probability_matrix_men_likes_women.csv" – adjust as needed.)
 
