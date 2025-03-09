@@ -28,11 +28,11 @@ def index():
     if request.method == "POST":
         # Parse parameters from the form.
         try:
-            num_days = int(request.form.get("num_days", 3))
+            num_days = 3
             daily_queue_size = int(request.form.get("daily_queue_size", 5))
             weight_queue_penalty = float(request.form.get("weight_queue_penalty", 0.5))
             weight_reciprocal = float(request.form.get("weight_reciprocal", 1.0))
-            random_seed = int(request.form.get("random_seed", 42))
+            random_seed = 42
         except ValueError:
             return "Invalid parameter(s) provided.", 400
 
@@ -152,10 +152,7 @@ def index():
           </head>
           <body>
             <h2>Tinder-Style Simulation Parameters</h2>
-            <form method="post">
-              <label for="num_days">Days:</label>
-              <input type="number" id="num_days" name="num_days" value="3" min="1" max="7">
-              
+            <form method="post">              
               <label for="daily_queue_size">Daily Queue Size:</label>
               <input type="number" id="daily_queue_size" name="daily_queue_size" value="5" min="3" max="10">
               
@@ -164,9 +161,6 @@ def index():
               
               <label for="weight_reciprocal">Reciprocal Weight:</label>
               <input type="number" id="weight_reciprocal" name="weight_reciprocal" value="1.0" step="0.1" min="0" max="5.0">
-              
-              <label for="random_seed">Random Seed:</label>
-              <input type="number" id="random_seed" name="random_seed" value="42" min="1" max="5000">
               
               <label>
                 <input type="checkbox" name="export_trace">
