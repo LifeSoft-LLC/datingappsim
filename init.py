@@ -81,7 +81,6 @@ for i in range(100):
 
 women_df = pd.DataFrame(women_profiles)
 women_df.to_csv("synthetic_women_profiles.csv", index=False)
-print("Women profiles CSV created.")
 
 # Generate men's profiles
 men_profiles = []
@@ -111,7 +110,6 @@ for j in range(100):
 
 men_df = pd.DataFrame(men_profiles)
 men_df.to_csv("synthetic_men_profiles.csv", index=False)
-print("Men profiles CSV crated.")
 
 # Mapping for education levels (for compatibility checks)
 edu_level_index = {level: idx for idx, level in enumerate(education_levels)}
@@ -133,12 +131,13 @@ prob_men_likes_women = np.zeros((100, 100))
 for i, woman in enumerate(women_profiles):
     woman_attr = women_attract_scores[i]
     for j, man in enumerate(men_profiles):
-        
+
+        # baseline: more attractive women are more choosy
         p = 0.6*(0.5/woman_attr)**1
     
-        # probability influenced by man's attractiveness
+        # baseline further influenced by man's attractiveness
         man_attr = men_attract_scores[j]
-        p *= p * man_attr  # unchanged baseline
+        p *= p * man_attr
 
         # Height compatibility: if man is shorter than woman, apply a stronger penalty.
         if man["Height(inches)"] < woman["Height(inches)"]:
@@ -182,8 +181,7 @@ for i, woman in enumerate(women_profiles):
         if drink_diff == 2:
             p *= 0.8  # stronger penalty
 
-        # Clamp p between 0 and 1.
-        p = max(0.0, min(1.0, p))
+        # Removed clamp; assign raw probability directly
         prob_women_likes_men[i, j] = p
 
 # Scale the Women->Men matrix to target an average of ~12%
@@ -191,18 +189,21 @@ avg_prob_women = prob_women_likes_men.mean()
 if avg_prob_women < 0.10 or avg_prob_women > 0.15:
     scale_factor = 0.12 / avg_prob_women
     prob_women_likes_men *= scale_factor
-    prob_women_likes_men = np.clip(prob_women_likes_men, 0, 1)
+
+# Apply logistic transformation: p* = p/(p+1)
+prob_women_likes_men = prob_women_likes_men / (prob_women_likes_men + 1)
 
 # Calculate Men -> Women probabilities with stronger incompatibility responses
 for j, man in enumerate(men_profiles):
     man_attr = men_attract_scores[j]
     for i, woman in enumerate(women_profiles):
         woman_attr = women_attract_scores[i]
-        p = 0.15 + 0.5 * woman_attr * (1/man_attr)**0.5 # baseline
+        # Combined baseline based on woman's attractiveness + hotter men are more choosy
+        p = 0.15 + 0.5 * woman_attr * (1/man_attr)**0.5  # baseline
 
         # Height: if woman is taller than man, apply a stronger penalty.
         if woman["Height(inches)"] > man["Height(inches)"]:
-            p *= 0.90  # increased penalty from 0.95 to 0.90
+            p *= 0.90  # increased penalty
 
         # Dating intentions: stronger penalty for mismatches.
         w_intent = woman["Dating Intentions"]
@@ -218,11 +219,12 @@ for j, man in enumerate(men_profiles):
         # Drinking compatibility: stronger penalty for major mismatch.
         w_drink = woman["Drinking Habits"]
         m_drink = man["Drinking Habits"]
+        drink_scale = {"Never": 0, "Socially": 1, "Often": 2}
         drink_diff = abs(drink_scale[w_drink] - drink_scale[m_drink])
         if drink_diff == 2:
             p *= 0.90  # stronger penalty
 
-        p = max(0.0, min(1.0, p))
+        # Removed clamp; assign raw probability directly
         prob_men_likes_women[j, i] = p
 
 # Scale the Men->Women matrix to target an average of ~43%
@@ -230,7 +232,9 @@ avg_prob_men = prob_men_likes_women.mean()
 if avg_prob_men < 0.40 or avg_prob_men > 0.45:
     scale_factor = 0.43 / avg_prob_men
     prob_men_likes_women *= scale_factor
-    prob_men_likes_women = np.clip(prob_men_likes_women, 0, 1)
+
+# Apply logistic transformation: p* = p/(p+1)
+prob_men_likes_women = prob_men_likes_women / (prob_men_likes_women + 1)
 
 # Create DataFrames for the matrices and save to CSV files.
 women_ids = [f"W{k+1}" for k in range(100)]
@@ -238,8 +242,6 @@ men_ids   = [f"M{k+1}" for k in range(100)]
 
 wm_df = pd.DataFrame(prob_women_likes_men, index=women_ids, columns=men_ids)
 wm_df.to_csv("probability_matrix_women_likes_men.csv", index_label="Woman")
-print("Created CSV file for prob women likes men.")
 
 mw_df = pd.DataFrame(prob_men_likes_women, index=men_ids, columns=women_ids)
 mw_df.to_csv("probability_matrix_men_likes_women.csv", index_label="Man")
-print("Created CSV file for prob men likes women.")
