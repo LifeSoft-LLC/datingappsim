@@ -330,10 +330,10 @@ def index():
         <p>Results can be reported as either a bar chart (one bar is one man or one woman) or as a histogram of counts.</p>
         <h2>Tinder-Style Simulation Parameters</h2>
         <form method="post">
-          <label for="weight_reciprocal">Reciprocal Weight:</label>
+          <label for="weight_reciprocal">Reciprocal Weight (w<sub>reciprocal</sub>):</label>
           <input type="number" id="weight_reciprocal" name="weight_reciprocal" value="1.0" step="0.1" min="0" max="5.0">
           
-          <label for="weight_queue_penalty">Queue Penalty Weight:</label>
+          <label for="weight_queue_penalty">Queue Penalty Weight (w<sub>queue</sub>):</label>
           <input type="number" id="weight_queue_penalty" name="weight_queue_penalty" value="0.5" step="0.1" min="0" max="2.0">
           
           <label>
