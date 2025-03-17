@@ -317,6 +317,17 @@ def index():
         </style>
       </head>
       <body>
+        <h1>A "Tinder-like" dating simulation</h1>
+        <p>The following simulation is designed to replicate the dynamics of a (highly simplified) dating platform in the style of swiping apps like Tinder.</p>
+        <p>The simulation runs for three "days." Each day, the same 100 men and 100 women (200 people in total), each with their own profiles and preferences, "log into" the platform in a random order and swipe right (like) or left (pass) on five profiles of the opposite sex.</p>
+        <p>The order of each user's recommended profiles is determined by the platform's algorithm. That algorithm contains two "weights" that will be chosen by you.
+        <ul>
+          <li>The first is w<sub>reciprocal</sub> — by increasing this weight, you will <u><em>increase</em></u> the likelihood of being shown for candidate with a higher likelihood of liking back.</li>
+          <li>The second is w<sub>queue</sub> — by increasing this weight, you will <u><em>decrease</em></u> the likelihood of being shown for a candidate with a higher number of pending likes.</li>
+        </ul></p>
+        <p>(If you're interested in the full equation of the algorithm, please see the slide deck for Session 2 on Canvas.)</p>
+        <p>As you change these weights, you can observe the effects of your decisions on the overall performance of the digital marketplace, including likes, "stale" likes (not seen for more than a day), "unseen" likes (not seen at all), and matches.</p>
+        <p>Results can be reported as either a bar chart (one bar is one man or one woman) or as a histogram of counts.</p>
         <h2>Tinder-Style Simulation Parameters</h2>
         <form method="post">
           <label for="weight_reciprocal">Reciprocal Weight:</label>
