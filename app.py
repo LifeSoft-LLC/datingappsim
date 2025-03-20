@@ -23,8 +23,8 @@ def index():
             daily_queue_size = int(request.form.get("daily_queue_size", 5))
             weight_reciprocal = float(request.form.get("weight_reciprocal", 1.0))
             weight_queue_penalty = float(request.form.get("weight_queue_penalty", 0.5))
-            export_trace = request.form.get("export_trace") == "on"
-            export_jack_jill_trace = request.form.get("export_jack_jill_trace") == "on"
+            export_trace = request.form.get("export_trace") == "off"
+            export_jack_jill_trace = request.form.get("export_jack_jill_trace") == "off"
             show_match_plots = request.form.get("show_match_plots") == "on"
             show_like_plots = request.form.get("show_like_plots") == "on"
             plot_type = request.form.get("plot_type", "Bar Chart")
@@ -87,7 +87,7 @@ def index():
         # Prepare summary HTML with new content and structure.
         summary_html = f"""
         <div style='font-size:14px; line-height:1.5;'>
-          <b>=== Tinder-Style Simulation Results ===</b><br>
+          <b>=== Tinder-Style Simulation Results with w<sub>reciprocal</sub>={weight_reciprocal} and w<sub>queue</sub>={weight_queue_penalty} ===</b><br>
           <br>
           <b># of Profile Views:</b> {profile_views_total}<br>
           <div style="margin-left:20px;">
@@ -200,15 +200,15 @@ def index():
 
             elif plot_type == "Histogram":
               # Fixed bin labels for histogram plots.
-              bin_labels = ["0", "1-2", "3-4", "5+"]
+              bin_labels = ["0", "1-3", "4-7", "8+"]
               # Function to compute histogram counts for fixed bins:
               # - Count exactly 0, counts between 1 and 2, between 3 and 4, and 5 or more.
               def compute_hist_counts(data):
                   data = np.array(data)
                   bin0 = np.sum(data == 0)
-                  bin1 = np.sum((data >= 1) & (data <= 2))
-                  bin2 = np.sum((data >= 3) & (data <= 4))
-                  bin3 = np.sum(data >= 5)
+                  bin1 = np.sum((data >= 1) & (data <= 3))
+                  bin2 = np.sum((data >= 4) & (data <= 7))
+                  bin3 = np.sum(data >= 8)
                   return [bin0, bin1, bin2, bin3]
               
               # Compute histogram counts for matches and likes.
@@ -347,8 +347,8 @@ def index():
         <p>The simulation runs for three "days." Each day, the same 100 men and 100 women (200 people in total), each with their own profiles and preferences, "log into" the platform in a random order and swipe right (like) or left (pass) on five profiles of the opposite sex (this is a heterosexual illustration; the underlying concepts apply more generally).</p>
         <p>Each user <i>i</i> is recommended profiles in descending order of a personalized score <i>s(i,j)</i> assigned to each potential match <i>j</i> on the other side of the market. That score is parameterized by two "weights" that will be chosen by you.
         <ul>
-          <li>The first is w<sub>reciprocal</sub> — by increasing this weight, you will increasingly <u><em>prioritize</em></u> candidates <i>j</i> with a higher likelihood of liking <i>i</i> back. Choose w<sub>reciprocal</sub> between 0 and 5.</li>
-          <li>The second is w<sub>queue</sub> — by increasing this weight, you will increasingly <u><em>suppress</em></u> candidates <i>j</i> with a longer queue of (unseen) incoming likes. Choose w<sub>queue</sub> between 0 and 2.</li>
+          <li>The first is w<sub>reciprocal</sub> — by increasing this weight, you will increasingly <u><em>prioritize</em></u> candidates <i>j</i> with a higher likelihood of liking <i>i</i> back. Choose w<sub>reciprocal</sub> between 0 and 3.</li>
+          <li>The second is w<sub>queue</sub> — by increasing this weight, you will increasingly <u><em>suppress</em></u> candidates <i>j</i> with a longer queue of (unseen) incoming likes. Choose w<sub>queue</sub> between 0 and 1.</li>
         </ul></p>
         <p>See the slide deck for Session 2 on Canvas for a precise definition of the score <i>s(i,j)</i>.</p>
         <p>As you change these weights, you can observe the effects of your decisions on the overall performance of the digital marketplace, including likes, unseen likes, "stale" unseen likes (not seen for more than a day), and matches. Note that there is randomness in the responses of users and so simulation results will fluctuate somewhat from one run to the next.</p>
@@ -356,10 +356,10 @@ def index():
         <h2>Tinder-Style Simulation Parameters</h2>
         <form method="post">
           <label for="weight_reciprocal">Reciprocal Weight (w<sub>reciprocal</sub>):</label>
-          <input type="number" id="weight_reciprocal" name="weight_reciprocal" value="0.0" step="0.1" min="0" max="5.0">
+          <input type="number" id="weight_reciprocal" name="weight_reciprocal" value="0.0" step="0.1" min="0" max="3.0">
           
           <label for="weight_queue_penalty">Queue Penalty Weight (w<sub>queue</sub>):</label>
-          <input type="number" id="weight_queue_penalty" name="weight_queue_penalty" value="0.0" step="0.1" min="0" max="2.0">
+          <input type="number" id="weight_queue_penalty" name="weight_queue_penalty" value="0.0" step="0.01" min="0" max="1.0">
           
           <label>
             <input type="checkbox" name="show_match_plots" checked>
